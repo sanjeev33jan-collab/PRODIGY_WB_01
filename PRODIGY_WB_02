@@ -1,0 +1,69 @@
+<!-- Save as: index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Persistent CRUD App</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { margin: 5px; }
+    pre { background: #f0f0f0; padding: 10px; }
+  </style>
+</head>
+<body>
+  <h2>CRUD with SQLite Backend</h2>
+
+  <input type="text" id="itemId" placeholder="ID (for update/delete)">
+  <input type="text" id="itemName" placeholder="Item Name">
+  <button onclick="createItem()">Create</button>
+  <button onclick="updateItem()">Update</button>
+  <button onclick="deleteItem()">Delete</button>
+  <button onclick="getItems()">Get All</button>
+
+  <pre id="output"></pre>
+
+  <script>
+    const apiUrl = 'http://localhost:3000/items';
+
+    function createItem() {
+      const name = document.getElementById('itemName').value;
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      .then(res => res.json())
+      .then(data => showOutput(data));
+    }
+
+    function getItems() {
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => showOutput(data));
+    }
+
+    function updateItem() {
+      const id = document.getElementById('itemId').value;
+      const name = document.getElementById('itemName').value;
+      fetch(`${apiUrl}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      .then(res => res.json())
+      .then(data => showOutput(data));
+    }
+
+    function deleteItem() {
+      const id = document.getElementById('itemId').value;
+      fetch(`${apiUrl}/${id}`, { method: 'DELETE' })
+        .then(res => res.json())
+        .then(data => showOutput(data));
+    }
+
+    function showOutput(data) {
+      document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+</body>
+</html>
