@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CRUD with REST API</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; }
+    input, button { margin: 5px; }
+  </style>
+</head>
+<body>
+
+  <h2>Basic CRUD App (REST API)</h2>
+
+  <!-- Create / Update Form -->
+  <input type="text" id="itemId" placeholder="ID (for update/delete)">
+  <input type="text" id="itemName" placeholder="Item Name">
+  <button onclick="createItem()">Create</button>
+  <button onclick="updateItem()">Update</button>
+
+  <!-- Read -->
+  <button onclick="getItems()">Get All</button>
+
+  <!-- Delete -->
+  <button onclick="deleteItem()">Delete</button>
+
+  <!-- Result -->
+  <pre id="output"></pre>
+
+  <script>
+    const apiUrl = 'http://localhost:3000/items'; // Change to your actual API endpoint
+
+    // CREATE
+    function createItem() {
+      const name = document.getElementById('itemName').value;
+      fetch(apiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      .then(res => res.json())
+      .then(data => showOutput(data))
+      .catch(err => showOutput(err));
+    }
+
+    // READ
+    function getItems() {
+      fetch(apiUrl)
+        .then(res => res.json())
+        .then(data => showOutput(data))
+        .catch(err => showOutput(err));
+    }
+
+    // UPDATE
+    function updateItem() {
+      const id = document.getElementById('itemId').value;
+      const name = document.getElementById('itemName').value;
+      fetch(`${apiUrl}/${id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name })
+      })
+      .then(res => res.json())
+      .then(data => showOutput(data))
+      .catch(err => showOutput(err));
+    }
+
+    // DELETE
+    function deleteItem() {
+      const id = document.getElementById('itemId').value;
+      fetch(`${apiUrl}/${id}`, {
+        method: 'DELETE'
+      })
+      .then(res => res.json())
+      .then(data => showOutput(data))
+      .catch(err => showOutput(err));
+    }
+
+    function showOutput(data) {
+      document.getElementById('output').textContent = JSON.stringify(data, null, 2);
+    }
+  </script>
+
+</body>
+</html>
